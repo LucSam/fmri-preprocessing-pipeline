@@ -19,7 +19,7 @@ A comprehensive fMRI preprocessing pipeline with distortion correction, motion c
 
 ## Documentation
 
-For detailed documentation, please see [documentation](docs/fmri-preprocessing-pipeline-documentation.html).
+For detailed documentation, please see [documentation](docs/README.md).
 
 ## Usage
 
