@@ -19,7 +19,7 @@ This pipeline provides a comprehensive set of tools for preprocessing functional
 - **Atlas registration** with support for AAL, Schaefer, and FreeSurfer parcellations
 - **ICA-based denoising** with MELODIC and ICA-AROMA
 - **CompCor denoising** with optional bandpass filtering
-- **Comprehensive functional connectivity analysis**
+- **Functional connectivity matrix creation**
 - **Extensive quality control visualizations**
 - **Detailed HTML and text summary reports**
 
