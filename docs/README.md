@@ -6,7 +6,7 @@
 
 ## Overview
 
-This pipeline provides a comprehensive set of tools for preprocessing functional MRI (fMRI) data. It includes distortion correction, motion correction, advanced denoising techniques (ICA-AROMA and CompCor), and functional connectivity analysis, making it suitable for both clinical and research applications.
+This pipeline provides a comprehensive set of tools for preprocessing functional MRI (fMRI) data. It includes distortion correction, motion correction, advanced denoising techniques (ICA-AROMA and CompCor), and functional connectivity matrix creation, making it suitable for both clinical and research applications.
 
 ## Features
 
