@@ -1,0 +1,579 @@
+
+
+<h2><b>Citation</b></h2>
+<p>If you use this pipeline in your research, please cite:</p>
+<p style="font-family: Menlo, monospace; background-color: #f2f2f2; padding: 10px;">Fekonja, L., &amp; Karatay, O. (2025). fMRI Preprocessing Pipeline (Version 1.0) [Computer software].</p>
+
+<h2><b>Acknowledgments</b></h2>
+<p>This pipeline integrates and builds upon several neuroimaging tools:</p>
+<ul>
+  <li>FSL (FMRIB Software Library)</li>
+  <li>ANTs (Advanced Normalization Tools)</li>
+  <li>MRtrix3</li>
+  <li>ICA-AROMA</li>
+  <li>CompCor denoising algorithm</li>
+  <li>FreeSurfer (including SynthSeg)</li>
+  <li>Python libraries: nibabel, nilearn, ANTsPy, ANTsPyNet, and more</li>
+</ul>
+
+<h2><b>Contact</b></h2>
+<p>For questions, feedback, or support, please contact:</p>
+<p><b>Authors:</b> Lucius Fekonja, Onurhan Karatay</p>
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>fMRI Preprocessing Pipeline Documentation v15.5</title>
+  <style type="text/css">
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #262626;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      margin: 0px 0px 15px 0px;
+      font: 30px 'Helvetica Neue';
+      color: #212f3f;
+    }
+    h2 {
+      margin: 0px 0px 16.2px 0px;
+      font: 21.6px 'Helvetica Neue';
+      color: #212f3f;
+      border-bottom: 1px solid #eaeaea;
+      padding-bottom: 5px;
+    }
+    h3 {
+      margin: 0px 0px 15.6px 0px;
+      font: 15.6px 'Helvetica Neue';
+      color: #2b84d2;
+    }
+    h4 {
+      margin: 0px 0px 16.0px 0px;
+      font: 12.0px 'Helvetica Neue';
+      color: #262626;
+      font-weight: bold;
+    }
+    p {
+      margin: 0px 0px 14.4px 0px;
+      font: 12.0px 'Helvetica Neue';
+      color: #262626;
+    }
+    ul, ol {
+      margin: 15px 0;
+      padding-left: 30px;
+    }
+    li {
+      margin: 0px 0px 0px 0px;
+      font: 12.0px 'Helvetica Neue';
+      color: #262626;
+    }
+    code {
+      font: 10.8px Monaco;
+      color: #262626;
+      background-color: #f2f2f2;
+      padding: 2px 4px;
+      border-radius: 3px;
+    }
+    pre {
+      font: 10.8px Monaco;
+      color: #262626;
+      background-color: #f2f2f2;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    table {
+      margin: 24px 0px 24px 0px;
+      border-style: solid;
+      border-width: 1px;
+      border-color: #d5d5d5;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th {
+      background-color: #efefef;
+      border: 1px solid #d5d5d5;
+      padding: 12px;
+      text-align: left;
+      font-weight: bold;
+    }
+    td {
+      padding: 10px;
+      border: 1px solid #d5d5d5;
+    }
+    tr:nth-child(even) {
+      background-color: #f7f7f7;
+    }
+    .note {
+      background-color: #f8f9fa;
+      border-left: 4px solid #2b84d2;
+      padding: 10px;
+      margin: 15px 0;
+    }
+    .warning {
+      background-color: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 10px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+<body>
+<h1><b>fMRI Preprocessing Pipeline</b></h1>
+<p><b>Version:</b> 1.0<br>
+<b>Authors:</b> Lucius Fekonja, Onurhan Karatay<br>
+<b>Last Updated:</b> March 2025</p>
+
+<h2><b>Overview</b></h2>
+<p>This pipeline provides a comprehensive set of tools for preprocessing functional MRI (fMRI) data. It includes distortion correction, motion correction, advanced denoising techniques (ICA-AROMA and CompCor), and functional connectivity analysis, making it suitable for both clinical and research applications.</p>
+
+<h2><b>Features</b></h2>
+<ul>
+  <li><b>DICOM to NIfTI conversion</b> using MRtrix3</li>
+  <li><b>Distortion correction</b> using FSL's TOPUP</li>
+  <li><b>Motion correction</b> using FSL's MCFLIRT</li>
+  <li><b>Brain extraction</b> using ANTsPyNet</li>
+  <li><b>T1 to fMRI registration</b> using ANTs</li>
+  <li><b>Tissue segmentation</b> using choice of ANTs Deep Atropos or FreeSurfer SynthSeg</li>
+  <li><b>Atlas registration</b> with support for AAL, Schaefer, and FreeSurfer parcellations</li>
+  <li><b>ICA-based denoising</b> with MELODIC and ICA-AROMA</li>
+  <li><b>CompCor denoising</b> with optional bandpass filtering</li>
+  <li><b>Comprehensive functional connectivity analysis</b></li>
+  <li><b>Extensive quality control visualizations</b></li>
+  <li><b>Detailed HTML and text summary reports</b></li>
+</ul>
+
+<h2><b>Software Requirements</b></h2>
+<h3><b>Required Software</b></h3>
+<ul>
+  <li><b>FSL</b> (FMRIB Software Library)</li>
+  <li><b>MRtrix3</b></li>
+  <li><b>ANTs</b> (Advanced Normalization Tools)</li>
+  <li><b>Python 3</b> with the following packages:</li>
+  <ul>
+    <li>nibabel</li>
+    <li>numpy</li>
+    <li>nilearn</li>
+    <li>scikit-learn</li>
+    <li>scipy</li>
+    <li>matplotlib</li>
+    <li>seaborn</li>
+    <li>pandas</li>
+  </ul>
+  <li><b>ICA-AROMA</b></li>
+  <li><b>FreeSurfer</b> (required for FreeSurfer atlas or SynthSeg segmentation)</li>
+</ul>
+
+<h3><b>Optional Software</b></h3>
+<ul>
+  <li><b>ANTsPy</b> and <b>ANTsPyNet</b> for Deep Atropos segmentation and improved brain extraction</li>
+</ul>
+
+<h2><b>Input Data Requirements</b></h2>
+<p>The script expects the following input data:</p>
+<ol>
+  <li><b>DICOM directories</b> for:</li>
+  <ul>
+    <li>Spin Echo Field Map (Anterior-Posterior)</li>
+    <li>Spin Echo Field Map (Posterior-Anterior)</li>
+    <li>Two fMRI REST scans (Anterior-Posterior)</li>
+  </ul>
+  <li><b>T1-weighted structural image</b> in NIfTI format</li>
+  <li><b>Atlas file</b> (depending on the selected atlas type):</li>
+  <ul>
+    <li>AAL atlas</li>
+    <li>Schaefer atlas</li>
+    <li>FreeSurfer output directory (if using FreeSurfer)</li>
+  </ul>
+  <li><b>Lesion mask</b> (optional) in NIfTI format</li>
+</ol>
+
+<h2><b>Usage</b></h2>
+<h3><b>Basic Command</b></h3>
+<pre>./fmri_preprocessing.sh -s /path/to/subject \
+  -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
+  -A aal -a /path/to/AAL.nii \
+  -t /path/to/t1.nii.gz \
+  -S atropos \
+  -I /path/to/ICA-AROMA.py \
+  -C 1 -N 5 -B 1 -L 0.08 -H 0.01</pre>
+
+<h3><b>Command Line Options</b></h3>
+<table>
+  <tr>
+    <th>Option</th>
+    <th>Description</th>
+    <th>Required</th>
+  </tr>
+  <tr>
+    <td><code>-s</code></td>
+    <td>Subject directory path</td>
+    <td>No (defaults to current directory)</td>
+  </tr>
+  <tr>
+    <td><code>-o</code></td>
+    <td>Output directory path</td>
+    <td>No (defaults to <code>SUBJECT_DIR/preprocessed</code>)</td>
+  </tr>
+  <tr>
+    <td><code>-d</code></td>
+    <td>DICOM directories (comma-separated)</td>
+    <td>Yes</td>
+  </tr>
+  <tr>
+    <td><code>-A</code></td>
+    <td>Atlas type: 'aal', 'schaefer', or 'freesurfer'</td>
+    <td>No (defaults to 'aal')</td>
+  </tr>
+  <tr>
+    <td><code>-a</code></td>
+    <td>Path to atlas file (required for 'aal' and 'schaefer')</td>
+    <td>Conditional</td>
+  </tr>
+  <tr>
+    <td><code>-t</code></td>
+    <td>Path to T1 image</td>
+    <td>Yes</td>
+  </tr>
+  <tr>
+    <td><code>-l</code></td>
+    <td>Path to lesion mask</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td><code>-f</code></td>
+    <td>Path to FreeSurfer subject directory (for 'freesurfer' atlas)</td>
+    <td>Conditional</td>
+  </tr>
+  <tr>
+    <td><code>-I</code></td>
+    <td>Path to ICA-AROMA.py</td>
+    <td>Yes</td>
+  </tr>
+  <tr>
+    <td><code>-S</code></td>
+    <td>Segmentation method: 'atropos' or 'synthseg'</td>
+    <td>No (defaults to 'atropos')</td>
+  </tr>
+  <tr>
+    <td><code>-C</code></td>
+    <td>Enable CompCor denoising: 0=disabled, 1=enabled</td>
+    <td>No (defaults to 0)</td>
+  </tr>
+  <tr>
+    <td><code>-N</code></td>
+    <td>Number of CompCor components to extract</td>
+    <td>No (defaults to 5)</td>
+  </tr>
+  <tr>
+    <td><code>-B</code></td>
+    <td>Apply bandpass filter with CompCor: 0=disabled, 1=enabled</td>
+    <td>No (defaults to 1)</td>
+  </tr>
+  <tr>
+    <td><code>-L</code></td>
+    <td>Lowpass filter cutoff in Hz</td>
+    <td>No (defaults to 0.08)</td>
+  </tr>
+  <tr>
+    <td><code>-H</code></td>
+    <td>Highpass filter cutoff in Hz</td>
+    <td>No (defaults to 0.01)</td>
+  </tr>
+  <tr>
+    <td><code>-h</code></td>
+    <td>Display help message</td>
+    <td>No</td>
+  </tr>
+</table>
+
+<h3><b>Example Commands</b></h3>
+<h4><b>Using AAL Atlas with Deep Atropos segmentation and CompCor</b></h4>
+<pre>./fmri_preprocessing15_5.sh -s /path/to/subject \
+  -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
+  -A aal -a /path/to/AAL.nii \
+  -t /path/to/t1.nii.gz \
+  -S atropos \
+  -I /path/to/ICA-AROMA.py \
+  -C 1 -N 5 -B 1 -L 0.08 -H 0.01</pre>
+
+<h4><b>Using Schaefer Atlas with SynthSeg segmentation (without CompCor)</b></h4>
+<pre>./fmri_preprocessing15_5.sh -s /path/to/subject \
+  -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
+  -A schaefer -a /path/to/Schaefer2018_200Parcels_7Networks_order_FSLMNI152_2mm.nii.gz \
+  -t /path/to/t1.nii.gz \
+  -S synthseg \
+  -I /path/to/ICA-AROMA.py</pre>
+
+<h4><b>Using FreeSurfer Atlas</b></h4>
+<pre>./fmri_preprocessing15_5.sh -s /path/to/subject \
+  -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
+  -A freesurfer \
+  -t /path/to/t1.nii.gz \
+  -f /path/to/freesurfer_subj_dir \
+  -I /path/to/ICA-AROMA.py</pre>
+
+<h4><b>Including Lesion Mask with CompCor Denoising</b></h4>
+<pre>./fmri_preprocessing15_5.sh -s /path/to/subject \
+  -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
+  -A aal -a /path/to/AAL.nii \
+  -t /path/to/t1.nii.gz \
+  -l /path/to/lesion.nii.gz \
+  -I /path/to/ICA-AROMA.py \
+  -C 1 -N 8 -B 1 -L 0.08 -H 0.01</pre>
+
+<h2><b>Processing Steps</b></h2>
+<ol>
+  <li><b>Dependency and input validation</b>
+    <ul>
+      <li>Checks for required software and validates input files</li>
+    </ul>
+  </li>
+  <li><b>DICOM to NIfTI conversion</b>
+    <ul>
+      <li>Converts DICOM images to NIfTI format using MRtrix3</li>
+      <li>Extracts metadata (e.g., TR, phase encoding directions)</li>
+    </ul>
+  </li>
+  <li><b>TOPUP distortion correction</b>
+    <ul>
+      <li>Generates TOPUP encoding file</li>
+      <li>Runs TOPUP to estimate susceptibility-induced distortions</li>
+      <li>Applies correction to fMRI data</li>
+    </ul>
+  </li>
+  <li><b>Motion correction</b>
+    <ul>
+      <li>Applies MCFLIRT to correct for head motion</li>
+      <li>Generates motion parameters, FD metrics, and QC plots</li>
+      <li>Creates motion confounds file</li>
+    </ul>
+  </li>
+  <li><b>Brain extraction</b>
+    <ul>
+      <li>Extracts a 3D volume from the 4D fMRI</li>
+      <li>Applies ANTsPyNet brain extraction</li>
+      <li>Creates brain mask and applies it to 4D fMRI</li>
+    </ul>
+  </li>
+  <li><b>T1 to fMRI registration</b>
+    <ul>
+      <li>Adjusts strides of T1 image</li>
+      <li>Registers T1 to fMRI space</li>
+      <li>Transforms lesion mask (if provided)</li>
+    </ul>
+  </li>
+  <li><b>Tissue segmentation</b>
+    <ul>
+      <li>Uses selected segmentation method (Deep Atropos or SynthSeg)</li>
+      <li>Generates probability maps for CSF, GM, and WM</li>
+      <li>Transforms segmentation results to fMRI space</li>
+    </ul>
+  </li>
+  <li><b>Atlas registration</b>
+    <ul>
+      <li>Registers selected atlas to fMRI space</li>
+      <li>Transforms FreeSurfer parcellation (if selected)</li>
+    </ul>
+  </li>
+  <li><b>ICA analysis and denoising</b>
+    <ul>
+      <li>Runs MELODIC ICA</li>
+      <li>Performs ICA-AROMA to identify and remove motion components</li>
+      <li>Generates QC visualizations for component classification</li>
+    </ul>
+  </li>
+  <li><b>CompCor denoising (optional)</b>
+    <ul>
+      <li>Extracts noise components from WM and CSF regions</li>
+      <li>Regresses out noise components and motion parameters</li>
+      <li>Applies bandpass filtering if enabled</li>
+      <li>Generates CompCor QC visualizations</li>
+    </ul>
+  </li>
+  <li><b>Carpet plot generation</b>
+    <ul>
+      <li>Creates carpet plot for quality assessment</li>
+      <li>Shows voxel-wise time series data by tissue type</li>
+    </ul>
+  </li>
+  <li><b>Connectivity analysis</b>
+    <ul>
+      <li>Extracts time series from atlas regions</li>
+      <li>Calculates Pearson, Spearman, and partial correlations</li>
+      <li>Generates connectivity matrices and visualizations</li>
+      <li>Creates Z-normalized connectivity matrices</li>
+    </ul>
+  </li>
+  <li><b>Report generation</b>
+    <ul>
+      <li>Creates detailed HTML summary report</li>
+      <li>Provides text-based summary report</li>
+      <li>Includes comprehensive file listings</li>
+    </ul>
+  </li>
+</ol>
+
+<h2><b>Output Structure</b></h2>
+<p>After running the pipeline, the following directory structure is created:</p>
+<pre>preprocessed/
+├── nifti/                       # Converted NIfTI files and JSON metadata
+│   ├── 010_SpinEchoFieldMap_AP.nii.gz
+│   ├── 011_SpinEchoFieldMap_PA.nii.gz
+│   ├── 012_rfMRI_REST_AP.nii.gz
+│   └── 013_rfMRI_REST_AP.nii.gz
+│
+├── registration/                # Registration-related files
+│   ├── fmri_3d.nii.gz
+│   ├── fmri_brain.nii.gz
+│   ├── fmri_brain_mask.nii.gz
+│   ├── t1_in_fmri_space.nii.gz
+│   ├── t1_brain_segmentation*.nii.gz
+│   ├── csf_prob.nii.gz
+│   ├── gm_prob.nii.gz
+│   ├── wm_prob.nii.gz
+│   ├── topup_*
+│   └── atlas_registered_to_fmri.nii.gz
+│
+├── motion_correction/           # Motion correction results
+│   ├── mcflirt_corrected_fmri.nii.gz
+│   ├── mcflirt_corrected_fmri.par
+│   ├── fd_metrics.txt
+│   └── motion_confounds.txt
+│
+├── melodic.ica/                 # MELODIC ICA results
+│   ├── melodic_IC.nii.gz
+│   ├── melodic_mix
+│   └── report/
+│
+├── ICA_AROMA/                   # ICA-AROMA denoising results
+│   ├── denoised_func_data_nonaggr.nii.gz
+│   ├── denoised_func_data_aggr.nii.gz
+│   └── classified_motion_ICs.txt
+│
+├── compcor/                     # CompCor denoising results (if enabled)
+│   ├── compcor_cleaned.nii.gz
+│   ├── acompcor_components.txt
+│   └── QC/
+│
+├── connectivity/                # Connectivity analysis results
+│   ├── functional_connectivity_matrix_*.txt
+│   └── valid_regions.csv
+│
+├── synthseg/                    # SynthSeg results (if used)
+│   └── segmentation.nii.gz
+│
+├── QC/                          # Quality control visualizations
+│   ├── rot_motion.png
+│   ├── trans_motion.png
+│   ├── combined_motion.png
+│   ├── ica_aroma_classification.png
+│   ├── carpet_plot_simple.png
+│   ├── functional_connectivity_matrices.png
+│   └── connectivity_distributions.png
+│
+├── preprocessing.log            # Processing log
+├── preprocessing_timestamp.log  # Backup log file
+├── summary_report.html          # HTML summary report
+└── summary_report.txt           # Text summary report
+</pre>
+
+<h2><b>Key Output Files</b></h2>
+<h3><b>Preprocessed Data</b></h3>
+<ul>
+  <li><b>ICA-AROMA Denoised fMRI (Non-aggressive):</b> <code>ICA_AROMA/denoised_func_data_nonaggr.nii.gz</code></li>
+  <li><b>ICA-AROMA Denoised fMRI (Aggressive):</b> <code>ICA_AROMA/denoised_func_data_aggr.nii.gz</code></li>
+  <li><b>CompCor Denoised fMRI:</b> <code>compcor/compcor_cleaned.nii.gz</code> (if CompCor enabled)</li>
+  <li><b>Brain-Extracted fMRI:</b> <code>registration/mcflirt_corrected_fmri_brain.nii.gz</code></li>
+  <li><b>T1 in fMRI Space:</b> <code>registration/t1_in_fmri_space.nii.gz</code></li>
+  <li><b>Atlas in fMRI Space:</b> <code>registration/atlas_registered_to_fmri.nii.gz</code></li>
+</ul>
+
+<h3><b>Connectivity Results</b></h3>
+<ul>
+  <li><b>Pearson Correlation Matrix:</b> <code>connectivity/functional_connectivity_matrix_pearson.txt</code></li>
+  <li><b>Spearman Correlation Matrix:</b> <code>connectivity/functional_connectivity_matrix_spearman.txt</code></li>
+  <li><b>Partial Correlation Matrix:</b> <code>connectivity/functional_connectivity_matrix_partial.txt</code></li>
+  <li><b>Z-normalized Matrices:</b> <code>connectivity/functional_connectivity_matrix_*_znorm.txt</code></li>
+  <li><b>CompCor Correlation Matrices:</b> <code>connectivity/functional_connectivity_matrix_compcor_*.txt</code> (if CompCor enabled)</li>
+</ul>
+
+<h3><b>Quality Control</b></h3>
+<ul>
+  <li><b>Motion Parameters:</b> <code>motion_correction/mcflirt_corrected_fmri.par</code></li>
+  <li><b>Framewise Displacement:</b> <code>motion_correction/fd_metrics.txt</code></li>
+  <li><b>Motion Plots:</b> <code>QC/rot_motion.png</code>, <code>QC/trans_motion.png</code></li>
+  <li><b>ICA-AROMA Classification:</b> <code>QC/ica_aroma_classification.png</code></li>
+  <li><b>Carpet Plot:</b> <code>QC/carpet_plot_simple.png</code> or <code>compcor/QC/carpet_denoised.png</code></li>
+  <li><b>Connectivity Visualizations:</b> <code>QC/functional_connectivity_matrices.png</code></li>
+  <li><b>CompCor QC:</b> <code>compcor/QC/variance_explained.png</code>, <code>compcor/QC/connectivity_matrices_comparison.png</code> (if CompCor enabled)</li>
+</ul>
+
+<h3><b>Reports</b></h3>
+<ul>
+  <li><b>HTML Summary Report:</b> <code>summary_report.html</code></li>
+  <li><b>Text Summary Report:</b> <code>summary_report.txt</code></li>
+  <li><b>Processing Log:</b> <code>preprocessing.log</code></li>
+</ul>
+
+
+
+<h2><b>Customization</b></h2>
+<h3><b>Advanced Options</b></h3>
+<p>The script offers several advanced customization options:</p>
+<ul>
+  <li><b>Segmentation method selection:</b> Choose between <code>atropos</code> (Deep Atropos with ANTsPyNet) and <code>synthseg</code> (FreeSurfer SynthSeg)</li>
+  <li><b>CompCor parameters:</b> 
+    <ul>
+      <li>Enable/disable CompCor denoising with the <code>-C</code> option</li>
+      <li>Adjust number of components with <code>-N</code> option</li>
+      <li>Enable/disable bandpass filtering with <code>-B</code> option</li>
+      <li>Set custom filter frequencies with <code>-L</code> and <code>-H</code> options</li>
+    </ul>
+  </li>
+  <li><b>MELODIC component count:</b> Modify the <code>--dim=30</code> parameter in the MELODIC call</li>
+  <li><b>ICA-AROMA denoising approach:</b> Use non-aggressive (<code>nonaggr</code>) denoising for connectivity analysis</li>
+  <li><b>Atlas registration approach:</b> Adjust the <code>-t s</code> parameter in the ANTs registration call</li>
+</ul>
+
+<h3><b>Processing Multiple Subjects</b></h3>
+<p>For batch processing of multiple subjects, create a wrapper script:</p>
+<pre>#!/bin/bash
+
+# Set paths
+ATLAS_FILE="/path/to/atlas.nii"
+T1_DIR="/path/to/t1_images"
+SUBJECT_DIR="/path/to/subjects"
+ICA_AROMA_DIR="/path/to/ICA-AROMA.py"
+
+# Set processing options
+SEGMENTATION_TYPE="atropos"  # or "synthseg"
+ENABLE_COMPCOR=1  # 1=enabled, 0=disabled
+COMPCOR_COMPONENTS=5
+BANDPASS_FILTER=1  # 1=enabled, 0=disabled
+LOWPASS_HZ=0.08
+HIGHPASS_HZ=0.01
+
+# Process each subject
+for subject in $(ls $SUBJECT_DIR); do
+  echo "Processing subject: $subject"
+  
+  ./fmri_preprocessing.sh \
+    -s "$SUBJECT_DIR/$subject" \
+    -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
+    -A aal -a "$ATLAS_FILE" \
+    -t "$T1_DIR/${subject}_t1.nii.gz" \
+    -I "$ICA_AROMA_DIR" \
+    -S "$SEGMENTATION_TYPE" \
+    -C "$ENABLE_COMPCOR" \
+    -N "$COMPCOR_COMPONENTS" \
+    -B "$BANDPASS_FILTER" \
+    -L "$LOWPASS_HZ" \
+    -H "$HIGHPASS_HZ"
+done
