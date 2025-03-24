@@ -119,7 +119,7 @@
 </ol>
 <h2 style="margin: 0.0px 0.0px 16.2px 0.0px; font: 21.6px 'Helvetica Neue'; color: #192330; -webkit-text-stroke: #192330"><span class="s1"><b>Usage</b><b></b></span></h2>
 <h3 style="margin: 0.0px 0.0px 15.6px 0.0px; font: 15.6px 'Helvetica Neue'; color: #236ec7; -webkit-text-stroke: #236ec7"><span class="s1"><b>Basic Command</b><b></b></span></h3>
-<p class="p7"><span class="s1">./fmri_preprocessing.sh -s /path/to/subject \</span></p>
+<p class="p7"><span class="s1">./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-A aal -a /path/to/AAL.nii \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-t /path/to/t1.nii.gz \</span></p>
@@ -320,7 +320,7 @@
 </table>
 <h3 style="margin: 0.0px 0.0px 15.6px 0.0px; font: 15.6px 'Helvetica Neue'; color: #236ec7; -webkit-text-stroke: #236ec7"><span class="s1"><b>Example Commands</b><b></b></span></h3>
 <h4 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #1d1d1d; -webkit-text-stroke: #1d1d1d"><span class="s1"><b>Using AAL Atlas with Deep Atropos segmentation and CompCor</b></span></h4>
-<p class="p7"><span class="s1">./fmri_preprocessing15_5.sh -s /path/to/subject \</span></p>
+<p class="p7"><span class="s1">./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-A aal -a /path/to/AAL.nii \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-t /path/to/t1.nii.gz \</span></p>
@@ -328,21 +328,21 @@
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-I /path/to/ICA-AROMA.py \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-C 1 -N 5 -B 1 -L 0.08 -H 0.01</span></p>
 <h4 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #1d1d1d; -webkit-text-stroke: #1d1d1d"><span class="s1"><b>Using Schaefer Atlas with SynthSeg segmentation (without CompCor)</b></span></h4>
-<p class="p7"><span class="s1">./fmri_preprocessing15_5.sh -s /path/to/subject \</span></p>
+<p class="p7"><span class="s1">./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-A schaefer -a /path/to/Schaefer2018_200Parcels_7Networks_order_FSLMNI152_2mm.nii.gz \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-t /path/to/t1.nii.gz \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-S synthseg \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-I /path/to/ICA-AROMA.py</span></p>
 <h4 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #1d1d1d; -webkit-text-stroke: #1d1d1d"><span class="s1"><b>Using FreeSurfer Atlas</b></span></h4>
-<p class="p7"><span class="s1">./fmri_preprocessing15_5.sh -s /path/to/subject \</span></p>
+<p class="p7"><span class="s1">./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-A freesurfer \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-t /path/to/t1.nii.gz \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-f /path/to/freesurfer_subj_dir \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-I /path/to/ICA-AROMA.py</span></p>
 <h4 style="margin: 0.0px 0.0px 16.0px 0.0px; font: 12.0px 'Helvetica Neue'; color: #1d1d1d; -webkit-text-stroke: #1d1d1d"><span class="s1"><b>Including Lesion Mask with CompCor Denoising</b></span></h4>
-<p class="p7"><span class="s1">./fmri_preprocessing15_5.sh -s /path/to/subject \</span></p>
+<p class="p7"><span class="s1">./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-A aal -a /path/to/AAL.nii \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>-t /path/to/t1.nii.gz \</span></p>
@@ -561,7 +561,7 @@
 <p class="p7"><span class="s1">for subject in $(ls $SUBJECT_DIR); do</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>echo "Processing subject: $subject"</span></p>
 <p class="p10"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
-<p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>./fmri_preprocessing.sh \</span></p>
+<p class="p7"><span class="s1"><span class="Apple-converted-space">  </span>./fmri-preprocessing-pipeline-1_0.sh \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">    </span>-s "$SUBJECT_DIR/$subject" \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">    </span>-d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \</span></p>
 <p class="p7"><span class="s1"><span class="Apple-converted-space">    </span>-A aal -a "$ATLAS_FILE" \</span></p>

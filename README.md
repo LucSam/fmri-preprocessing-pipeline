@@ -24,7 +24,7 @@ For detailed documentation, please see [documentation](docs/README.md).
 ## Usage
 
 ```bash
-./fmri_preprocessing15_5.sh -s /path/to/subject \
+./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \
   -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
   -A aal -a /path/to/AAL.nii \
   -t /path/to/t1.nii.gz \

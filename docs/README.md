@@ -66,7 +66,7 @@ The script expects the following input data:
 ### Basic Command
 
 ```bash
-./fmri_preprocessing.sh -s /path/to/subject \
+./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \
   -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
   -A aal -a /path/to/AAL.nii \
   -t /path/to/t1.nii.gz \
@@ -101,7 +101,7 @@ The script expects the following input data:
 #### Using AAL Atlas with Deep Atropos segmentation and CompCor
 
 ```bash
-./fmri_preprocessing15_5.sh -s /path/to/subject \
+./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \
   -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
   -A aal -a /path/to/AAL.nii \
   -t /path/to/t1.nii.gz \
@@ -113,7 +113,7 @@ The script expects the following input data:
 #### Using Schaefer Atlas with SynthSeg segmentation (without CompCor)
 
 ```bash
-./fmri_preprocessing15_5.sh -s /path/to/subject \
+./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \
   -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
   -A schaefer -a /path/to/Schaefer2018_200Parcels_7Networks_order_FSLMNI152_2mm.nii.gz \
   -t /path/to/t1.nii.gz \
@@ -124,7 +124,7 @@ The script expects the following input data:
 #### Using FreeSurfer Atlas
 
 ```bash
-./fmri_preprocessing15_5.sh -s /path/to/subject \
+./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \
   -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
   -A freesurfer \
   -t /path/to/t1.nii.gz \
@@ -135,7 +135,7 @@ The script expects the following input data:
 #### Including Lesion Mask with CompCor Denoising
 
 ```bash
-./fmri_preprocessing15_5.sh -s /path/to/subject \
+./fmri-preprocessing-pipeline-1_0.sh -s /path/to/subject \
   -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
   -A aal -a /path/to/AAL.nii \
   -t /path/to/t1.nii.gz \
@@ -353,7 +353,7 @@ HIGHPASS_HZ=0.01
 for subject in $(ls $SUBJECT_DIR); do
   echo "Processing subject: $subject"
   
-  ./fmri_preprocessing15_5.sh \
+  ./fmri-preprocessing-pipeline-1_0.sh \
     -s "$SUBJECT_DIR/$subject" \
     -d "010_SpinEchoFieldMap_AP,011_SpinEchoFieldMap_PA,012_rfMRI_REST_AP,013_rfMRI_REST_AP" \
     -A aal -a "$ATLAS_FILE" \
