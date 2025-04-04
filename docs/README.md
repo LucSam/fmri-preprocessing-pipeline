@@ -63,6 +63,24 @@ The script expects the following input data:
 
 ## Usage
 
+## Installation and Setup
+
+This pipeline provides a setup script that creates a conda environment with all required dependencies:
+
+1. Make sure you have Anaconda or Miniconda installed
+2. Run the setup script:
+   ```bash
+   bash fmri_setup.sh
+
+The setup script:
+
+   - Creates a conda environment named "fmri_env"
+   - Installs all required Python packages
+   - Checks for required external software (FSL, MRtrix3, ANTs)
+   - Creates an activation script for easy environment setup
+
+You'll still need to install the external software dependencies like FSL, MRtrix3, ANTs, and FreeSurfer separately if they're not already installed.
+
 ### Basic Command
 
 ```bash

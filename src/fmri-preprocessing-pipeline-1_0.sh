@@ -1,11 +1,194 @@
 #!/bin/bash
 
+# Set up color formatting for terminal output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Function to print section headers
+print_section() {
+    echo -e "\n${BLUE}╔═════════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║ $1${NC}"
+    echo -e "${BLUE}╚═════════════════════════════════════════════════════════════════╝${NC}"
+}
+
+# Function to print completion message
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
+
+# Function to print warning message
+print_warning() {
+    echo -e "${YELLOW}⚠ $1${NC}"
+}
+
+# Function to print error message
+print_error() {
+    echo -e "${RED}✗ $1${NC}"
+}
+
+# Function to fix Python path priorities
+fix_python_paths() {
+    # Save current Python path
+    local conda_python=$(conda info --base)/envs/fmri_env/bin/python
+    
+    # Check if this Python exists
+    if [ -f "$conda_python" ]; then
+        # Get directory of conda Python
+        local conda_bin_dir=$(dirname "$conda_python")
+        
+        # Prepend this directory to PATH
+        export PATH="$conda_bin_dir:$PATH"
+        
+        print_success "Python path fixed to prioritize conda environment"
+        echo "Now using Python: $(which python)"
+        echo "Python version: $(python --version)"
+    else
+        print_warning "Could not find conda Python at $conda_python"
+    fi
+}
+
+# Check if running in the correct environment
+if [[ -z "$FMRI_ENV_ACTIVE" ]]; then
+    # Environment variable not set, need to check for activation
+    
+    # Check if we're in a conda environment
+    if [[ -n "$CONDA_DEFAULT_ENV" ]]; then
+        if [[ "$CONDA_DEFAULT_ENV" == "fmri_env" ]]; then
+            # We're in the right conda environment
+            export FMRI_ENV_ACTIVE=1
+            fix_python_paths
+        else
+            print_warning "Currently in conda environment '$CONDA_DEFAULT_ENV' instead of 'fmri_env'"
+        fi
+    fi
+    
+    # If still not in right environment, look for the activation script
+    if [[ -z "$FMRI_ENV_ACTIVE" ]]; then
+        if [[ -f "./activate_fmri_env.sh" ]]; then
+            echo "Required environment not active. Attempting to activate..."
+            source ./activate_fmri_env.sh
+            export FMRI_ENV_ACTIVE=1
+            fix_python_paths
+        else
+            print_error "Required environment not found."
+            echo "==================================================================="
+            echo "Please set up the environment first by running:"
+            echo "  bash fmri_setup.sh"
+            echo "Or activate an existing environment before running this script."
+            echo "==================================================================="
+            exit 1
+        fi
+    fi
+fi
+
+# Verify Python availability
+if ! command -v python &> /dev/null; then
+    print_error "Python not found in PATH. Environment setup may have failed."
+    exit 1
+fi
+
+# Print environment info
+echo "Using Python: $(which python)"
+echo "Python Version: $(python --version)"
+
+# Function to check if a Python package is installed (directly trying to import it)
+check_python_package() {
+    local package=$1
+    local display_name=${2:-$package}
+    
+    # Try to import the package to verify it's truly accessible to the current Python
+    if python -c "import $package" >/dev/null 2>&1; then
+        print_success "$display_name is installed."
+        return 0
+    else
+        print_error "$display_name is not installed."
+        echo "Install with: pip install $package"
+        return 1
+    fi
+}
+
+# Check for required software
+print_section "Checking Dependencies"
+
+# Check command-line tools
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+if command_exists fsl || command_exists flirt; then
+    print_success "FSL is installed."
+else
+    print_error "FSL is not installed or not in PATH."
+    exit 1
+fi
+
+if command_exists mrconvert; then
+    print_success "MRtrix3 is installed."
+else
+    print_error "MRtrix3 is not installed or not in PATH."
+    exit 1
+fi
+
+if command_exists antsRegistrationSyNQuick.sh; then
+    print_success "ANTs is installed."
+else
+    print_error "ANTs is not installed or not in PATH."
+    exit 1
+fi
+
+if command_exists python3; then
+    print_success "Python3 is installed."
+else
+    print_error "Python3 is not installed or not in PATH."
+    exit 1
+fi
+
+# Check Python packages by direct import
+MISSING_PACKAGES=0
+
+# List of required packages
+PACKAGES=(
+    "nibabel:NiBabel"
+    "numpy:NumPy"
+    "nilearn:NiLearn"
+    "sklearn:scikit-learn"
+    "scipy:SciPy"
+    "matplotlib:Matplotlib"
+    "seaborn:Seaborn"
+    "pandas:Pandas"
+)
+
+# Check all packages
+for pkg in "${PACKAGES[@]}"; do
+    IFS=':' read -r package display_name <<< "$pkg"
+    if ! check_python_package "$package" "$display_name"; then
+        MISSING_PACKAGES=1
+    fi
+done
+
+# Exit if any packages are missing
+if [ $MISSING_PACKAGES -eq 1 ]; then
+    print_section "Missing Python Packages"
+    echo "Please fix the Python package issues before continuing."
+    echo "You can run the setup script again:"
+    echo "  bash fmri_setup.sh"
+    echo "Or install the missing packages manually:"
+    echo "  conda activate fmri_env"
+    echo "  pip install [package-name]"
+    exit 1
+fi
+
+print_section "Environment Check Passed"
+
 # fmri_preprocessing_with_compcor.sh
 # A comprehensive script for fMRI preprocessing with distortion correction, 
 # motion correction, ICA-AROMA denoising, CompCor denoising, and connectivity analysis.
 # 
 # Author: Lucius Fekonja
-# Version: 15.5
+# Version: 1.0
 # Date: March 2025
 
 # Exit immediately if a command exits with a non-zero status
@@ -157,6 +340,18 @@ if [ -z "$DICOM_DIRS" ] || [ -z "$T1_IMAGE" ] || [ -z "$ICA_AROMA_DIR" ]; then
     print_error "Missing required arguments."
     usage
     exit 1
+fi
+
+# Check for ICA-AROMA script (now that we have the path from command line)
+print_section "Checking ICA-AROMA"
+if [ -z "$ICA_AROMA_DIR" ]; then
+    print_error "ICA-AROMA path not provided. Please use the -I option to specify the path to ICA-AROMA.py"
+    exit 1
+elif [ ! -f "${ICA_AROMA_DIR}" ]; then
+    print_error "ICA-AROMA.py not found at specified path: ${ICA_AROMA_DIR}"
+    exit 1
+else
+    print_success "ICA-AROMA is available at: ${ICA_AROMA_DIR}"
 fi
 
 # For 'aal' and 'schaefer' atlas types, ATLAS_FILE is required
