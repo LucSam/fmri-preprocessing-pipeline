@@ -243,7 +243,7 @@ Options:
   -C ENABLE_COMPCOR     Enable CompCor denoising: 0=disabled, 1=enabled (default: 0)
   -N COMPCOR_COMPONENTS Number of CompCor components to extract (default: 5)
   -B BANDPASS_FILTER    Apply bandpass filter with CompCor: 0=disabled, 1=enabled (default: 1)
-  -L LOWPASS_HZ         Lowpass filter cutoff in Hz (default: 0.08)
+  -L LOWPASS_HZ         Lowpass filter cutoff in Hz (default: 0.1)
   -H HIGHPASS_HZ        Highpass filter cutoff in Hz (default: 0.01)
   -h                    Display this help message
 
@@ -255,7 +255,7 @@ With AAL atlas, SynthSeg segmentation, and CompCor:
   -t /path/to/t1.nii.gz \\
   -S synthseg \\
   -I /path/to/ICA-AROMA.py \\
-  -C 1 -N 5 -B 1 -L 0.08 -H 0.01
+  -C 1 -N 5 -B 1 -L 0.1 -H 0.01
 
 With Schaefer atlas and Deep Atropos segmentation:
 ./$(basename $0) -s /path/to/subject \\
